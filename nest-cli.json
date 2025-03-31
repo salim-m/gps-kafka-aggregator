@@ -18,6 +18,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/aggregator/tsconfig.app.json"
       }
+    },
+    "dispatcher": {
+      "type": "application",
+      "root": "apps/dispatcher",
+      "entryFile": "main",
+      "sourceRoot": "apps/dispatcher/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/dispatcher/tsconfig.app.json"
+      }
     }
   }
 }

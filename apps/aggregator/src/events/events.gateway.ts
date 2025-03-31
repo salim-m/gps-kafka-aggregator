@@ -1,4 +1,5 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -15,18 +16,23 @@ import { Socket } from 'socket.io';
   },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger = new Logger(EventsGateway.name);
+  private readonly LOG = new Logger(EventsGateway.name);
+
+  constructor(
+    @Inject('DISPATCHER_SERVICE')
+    private readonly client: ClientProxy,
+  ) {}
 
   handleConnection(client: Socket) {
-    this.logger.log(`Client id: ${client.id} connected`);
+    this.LOG.log(`Client id: ${client.id} connected`);
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client id: ${client.id} disconnected`);
+    this.LOG.log(`Client id: ${client.id} disconnected`);
   }
 
   @SubscribeMessage('events')
-  handleMessage(@MessageBody() data: string) {
-    return data;
+  async handleMessage(@MessageBody() data: string) {
+    return this.client.emit('tacking.coordinates', data);
   }
 }
