@@ -1,5 +1,5 @@
 import { Inject, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafkaProxy } from '@nestjs/microservices';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -20,7 +20,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     @Inject('DISPATCHER_SERVICE')
-    private readonly client: ClientProxy,
+    private readonly client: ClientKafkaProxy,
   ) {}
 
   handleConnection(client: Socket) {
@@ -32,7 +32,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('events')
-  async handleMessage(@MessageBody() data: string) {
-    return this.client.emit('tacking.coordinates', data);
+  async handleMessage(@MessageBody() data: unknown) {
+    this.LOG.debug('Sending: ' + data);
+    return this.client.emit('coordinates', data);
   }
 }

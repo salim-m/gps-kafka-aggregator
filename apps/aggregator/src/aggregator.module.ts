@@ -7,8 +7,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'DISPATCHER_SERVICE',
-        transport: Transport.TCP,
-        options: { port: 3001 },
+        transport: Transport.KAFKA,
+        options: {
+          producerOnlyMode: true,
+          client: { brokers: ['broker:9092'] },
+        },
       },
     ]),
   ],
